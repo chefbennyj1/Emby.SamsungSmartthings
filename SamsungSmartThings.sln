@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.645
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SamsungSmartThings", "BrowserNotifications\SamsungSmartThings.csproj", "{BAC9A83F-8C58-4B6C-884F-45EFC41F914F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BAC9A83F-8C58-4B6C-884F-45EFC41F914F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAC9A83F-8C58-4B6C-884F-45EFC41F914F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAC9A83F-8C58-4B6C-884F-45EFC41F914F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAC9A83F-8C58-4B6C-884F-45EFC41F914F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {75BD993F-40C9-4629-AA5A-4D3EC3677D07}
+	EndGlobalSection
+EndGlobal
