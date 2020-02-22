@@ -10,7 +10,7 @@ using MediaBrowser.Model.Logging;
 using MediaBrowser.Model.Serialization;
 using MediaBrowser.Model.Services;
 
-namespace SamsungSmartThings
+namespace SamsungSmartThings.Api
 {
     //ab88448e-abaf-4dce-be0c-7c56f54b7d24
 

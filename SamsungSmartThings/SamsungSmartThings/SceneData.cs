@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace SamsungSmartThings.SamsungSmartThings
 {
     public class Item
-                                         {
+    {
         public string sceneId            { get; set; }
         public string sceneName          { get; set; }
         public string sceneIcon          { get; set; }

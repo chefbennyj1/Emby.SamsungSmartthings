@@ -221,9 +221,10 @@
 
             html += '<label class="inputLabel inputLabelUnfocused" for="aliasPartitionName">Personal Access Token</label>';
             html += '<input type="text" name="personalAccessToken" id="personalAccessToken" class="emby-input">';
-            html += '<div class="fieldDescription">Personal access tokens are used to interact with the Samsung Smart Things API.</div>';
+            html += '<div class="fieldDescription">Personal access tokens are used to interact with the Samsung Smart Things.</div>';
             html += '<div class="fieldDescription">Make sure your Access Token allows access to Scenes</div>';
             html += '</div>';
+
             
             html += '<div class="infoBanner" id="smartThingsPersonalAccessTokenInfo" style="margin-top: 2em;">'
             html += '<p>Obtain SmartThings personal access token</p>';
@@ -233,7 +234,9 @@
             html += '<p>Make sure that you select <span style="font-weight:bold">Scenes -> Read all scenes</span> and <span style="font-weight:bold">Scenes -> Execute all scenes </span> for Authorized Scopes.</p>';
              
             html += '</div>';
-          
+            
+            //html += '<iframe src="https://account.smartthings.com/login?redirect=https%3A%2F%2Faccount.smartthings.com%2Ftokens" style="border: none; width:100%; height:20em"></iframe>';
+
             html += '<div class="formDialogFooter" style="margin:2em; padding-top:2%;">';
             html += '<button id="saveButton" is="emby-button" type="submit" class="raised button-submit block formDialogFooterItem emby-button">Save</button>';
             html += '</div>';
@@ -334,21 +337,7 @@
             html += '<div style="visibility: hidden;">0</div><i class="selectArrow md-icon"></i>';
             html += '</div> ';
             html += '</div>';
-
-            html += '<div class="selectContainer">';
-            html += '<label class="selectLabel" for="MediaItemCredits">Movies Credit Scene:</label>';
-            html += '<select is="emby-select" type="text" id="MediaItemCredits" name="MediaItemCredits" class="emby-input"></select>';
-            html += '<div class="selectArrowContainer">';
-            html += '<div style="visibility: hidden;">0</div><i class="selectArrow md-icon"></i>';
-            html += '</div>';
-            html += '</div>';
-
-            html += '<div class="inputContainer">';
-            html += '<label class="inputLabel inputLabelUnfocused" for="creditLength">Movies Credit Length</label>';
-            html += '<input type="number" id="creditLength" label="Media Item Credit Length" class="emby-input">';
-            html += '<div class="fieldDescription">Estimated time to schedule the credit scene before the end of the media item in seconds.</div>';
-            html += '</div>';
-
+         
             html += '<div class="sectionTitleContainer align-items-center"> ';
             html += '<h2 class="sectionTitle"><span>Series</span></h2> ';
             html += '<p>These scene will be set when series/seasons/episodes start, stop or resume playing.</p>  ';

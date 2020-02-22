@@ -13,7 +13,7 @@ namespace SamsungSmartThings
     public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages, IHasThumbImage
     {
         public static Plugin Instance { get; set; }
-        public ImageFormat ThumbImageFormat => ImageFormat.Jpg;
+        public ImageFormat ThumbImageFormat => ImageFormat.Png;
 
         private readonly Guid _id = new Guid("6952341D-5579-41D7-A771-703484AECAD9");
         public override Guid Id => _id;
