@@ -24,7 +24,7 @@ namespace SamsungSmartThings
         public Stream GetThumbImage()
         {
             var type = GetType();
-            return type.Assembly.GetManifestResourceStream(type.Namespace + ".thumb.jpg");
+            return type.Assembly.GetManifestResourceStream(type.Namespace + ".thumb.png");
         }
 
         public Plugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer) : base(applicationPaths,

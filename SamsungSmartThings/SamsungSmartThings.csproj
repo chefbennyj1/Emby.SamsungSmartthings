@@ -19,13 +19,13 @@
 <ItemGroup>
   <None Remove="Configuration\SmartThingsPage.html" />
   <None Remove="Configuration\SmartThingsPage.js" />
-  <None Remove="thumb.jpg" />
+  <None Remove="thumb.png" />
 </ItemGroup>
 
 <ItemGroup>
   <EmbeddedResource Include="Configuration\SmartThingsPage.html" />
   <EmbeddedResource Include="Configuration\SmartThingsPage.js" />
-  <EmbeddedResource Include="thumb.jpg" />
+  <EmbeddedResource Include="thumb.png" />
 </ItemGroup>
 
 <ItemGroup> <PackageReference Include="mediabrowser.server.core" Version="4.2.0.40" /> <PackageReference Include="System.Memory" Version="4.5.3" /></ItemGroup>
