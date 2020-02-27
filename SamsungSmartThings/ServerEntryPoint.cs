@@ -270,8 +270,6 @@ namespace SamsungSmartThings
             RunScene(sceneName, config);
 
         }
-
-        
         
         private static bool ScheduleAllowScene(SavedProfile profile)
         {
@@ -284,7 +282,7 @@ namespace SamsungSmartThings
         private void RunScene(string sceneId, PluginConfiguration config)
         {
             var sceneUrl = "https://api.smartthings.com/v1/scenes/" + sceneId + "/execute";
-            /*
+            
             try
             {
                 var req = HttpWebRequest.Create(sceneUrl);
@@ -303,7 +301,8 @@ namespace SamsungSmartThings
             {
                 logger.Error("SMART THINGS - " + ex.Message);
             }
-            */
+            
+            /*
             var request =  WebRequest.Create(sceneUrl);
             request.Headers["Authorization"] = "Bearer " + config.PersonalAccessToken;
             request.Method = "POST";
@@ -313,7 +312,7 @@ namespace SamsungSmartThings
             {
                 dataStream.Write(new byte[0], 0, 1);
             }
-            
+            */
 
             /*
             using (var client = new HttpClient())
