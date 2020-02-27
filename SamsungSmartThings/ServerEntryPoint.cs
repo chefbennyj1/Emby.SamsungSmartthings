@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading;
 using MediaBrowser.Common.Net;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Plugins;
@@ -22,7 +18,7 @@ namespace SamsungSmartThings
         private ILogger logger                        { get; set; }
         private ILogManager LogManager                { get; set; }
         private static IJsonSerializer JsonSerializer { get; set; }
-        public static IHttpClient Client             { get; set; }
+        private static IHttpClient Client             { get; set; }
         private static ServerEntryPoint Instance      { get; set; }
         private static ISessionManager SessionManager { get; set; }
         
@@ -290,9 +286,41 @@ namespace SamsungSmartThings
                    (DateTime.Now <= DateTime.Now.Date.AddDays(1).AddHours(4));
         }
 
-        private async void RunScene(string sceneId, PluginConfiguration config)
+        private void RunScene(string sceneId, PluginConfiguration config)
         {
-            var sceneUrl = "https://" + $"api.smartthings.com/v1/scenes/{sceneId}/execute";
+            var sceneUrl = "https://api.smartthings.com/v1/scenes/" + sceneId + "/execute";
+            /*
+            try
+            {
+                var req = HttpWebRequest.Create(sceneUrl);
+                req.Method = "POST";
+                req.Headers.Add("Authorization", "Bearer " + config.PersonalAccessToken);
+                using (WebResponse response = req.GetResponse())
+                {
+                    using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+                    {
+                        var json =  streamReader.ReadToEnd();
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                logger.Error("SMART THINGS - " + ex.Message);
+            }
+            */
+            var request =  WebRequest.Create(sceneUrl);
+            request.Headers["Authorization"] = "Bearer " + config.PersonalAccessToken;
+            request.Method = "POST";
+            request.ContentLength = 0;
+            request.ContentType = "application/x-www-form-urlencoded";
+            using (Stream dataStream = request.GetRequestStream())
+            {
+                dataStream.Write(new byte[0], 0, 1);
+            }
+            
+
+            /*
             using (var client = new HttpClient())
             {
                 
@@ -300,7 +328,7 @@ namespace SamsungSmartThings
                     new AuthenticationHeaderValue("Bearer", config.PersonalAccessToken);
                 await client.PostAsync(sceneUrl, new MultipartContent("application/json"), CancellationToken.None);
             }
-
+            */
             /*
             try
             {

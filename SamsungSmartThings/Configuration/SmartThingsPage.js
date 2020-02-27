@@ -87,77 +87,77 @@
                 });
         }
 
-        function createUserTokenAndConnect(ip, view) {
+        //function createUserTokenAndConnect(ip, view) {
 
-            ApiClient.getJSON(ApiClient.getUrl("GetUserToken?ipAddress=" + encodeURIComponent(ip))).then((result) => {
+        //    ApiClient.getJSON(ApiClient.getUrl("GetUserToken?ipAddress=" + encodeURIComponent(ip))).then((result) => {
 
-                //var json = JSON.parse(result);
-                //We have an error
-                if (result[0].error) {
-                    if (result[0].error.type == 101) {  //User didn't press the link button - remind them with alert
-                        require(['alert'], function (alert) {
-                            alert({
-                                title: 'Please press the discover button on your phillips hue, and try again.',
-                                text: ''
-                            });
-                        });
+        //        //var json = JSON.parse(result);
+        //        //We have an error
+        //        if (result[0].error) {
+        //            if (result[0].error.type == 101) {  //User didn't press the link button - remind them with alert
+        //                require(['alert'], function (alert) {
+        //                    alert({
+        //                        title: 'Please press the discover button on your phillips hue, and try again.',
+        //                        text: ''
+        //                    });
+        //                });
 
-                    }
-                    else if (result[0].error.type == 1) {
-                        require(['alert'],
-                            function (alert) {
-                                alert({
-                                    title: 'Unauthorized User Error',
-                                    text: 'The user name is invalid.'
-                                });
-                            });
-                    } else {
-                        require(['alert'], function (alert) {
-                            alert({
-                                title: 'Connection Error',
-                                text: 'Please report this error code: ' + result[0].error.type
-                            });
-                        });
-                    }
+        //            }
+        //            else if (result[0].error.type == 1) {
+        //                require(['alert'],
+        //                    function (alert) {
+        //                        alert({
+        //                            title: 'Unauthorized User Error',
+        //                            text: 'The user name is invalid.'
+        //                        });
+        //                    });
+        //            } else {
+        //                require(['alert'], function (alert) {
+        //                    alert({
+        //                        title: 'Connection Error',
+        //                        text: 'Please report this error code: ' + result[0].error.type
+        //                    });
+        //                });
+        //            }
 
-                    //This is anyother error - reset the UI
-                    view.querySelector('#BridgeStatus').innerText = "Not Connected";
-                    var statusIcon = view.querySelector('#BridgeStatusIcon');
-                    statusIcon.innerHTML = "error";
-                    statusIcon.style.color = "slategray";
-                    loading.hide();
+        //            //This is anyother error - reset the UI
+        //            view.querySelector('#BridgeStatus').innerText = "Not Connected";
+        //            var statusIcon = view.querySelector('#BridgeStatusIcon');
+        //            statusIcon.innerHTML = "error";
+        //            statusIcon.style.color = "slategray";
+        //            loading.hide();
 
-                    return;
-                }
+        //            return;
+        //        }
 
-                //We are good to go!
-                if (result[0].success) {
-                    ApiClient.getPluginConfiguration(pluginId).then((config) => {
-                        config.HubIpAddress = ip;
-                        config.UserToken = result[0].success.username;
-                        ApiClient.updatePluginConfiguration(pluginId, config).then((result) => {
-                            Dashboard.processPluginConfigurationUpdateResult(result);  //Show config update success popup 
-                            //Switch the button text back to 'discover'
-                            view.querySelector('#BridgeStatus').innerText = "Connection Ok";
-                            var statusIcon = view.querySelector('#BridgeStatusIcon');
-                            statusIcon.innerHTML = "check_box";
-                            statusIcon.style.color = "green";
-                            loading.hide();
-                            require(['alert'], function (alert) {
-                                alert({
-                                    title: 'Congratulations!',
-                                    text: 'Emby Server is now connected to Phillips Hue.'
-                                });
-                            });
+        //        //We are good to go!
+        //        if (result[0].success) {
+        //            ApiClient.getPluginConfiguration(pluginId).then((config) => {
+        //                config.HubIpAddress = ip;
+        //                config.UserToken = result[0].success.username;
+        //                ApiClient.updatePluginConfiguration(pluginId, config).then((result) => {
+        //                    Dashboard.processPluginConfigurationUpdateResult(result);  //Show config update success popup 
+        //                    //Switch the button text back to 'discover'
+        //                    view.querySelector('#BridgeStatus').innerText = "Connection Ok";
+        //                    var statusIcon = view.querySelector('#BridgeStatusIcon');
+        //                    statusIcon.innerHTML = "check_box";
+        //                    statusIcon.style.color = "green";
+        //                    loading.hide();
+        //                    require(['alert'], function (alert) {
+        //                        alert({
+        //                            title: 'Congratulations!',
+        //                            text: 'Emby Server is now connected to Phillips Hue.'
+        //                        });
+        //                    });
 
-                            ApiClient.getPluginConfiguration(pluginId).then((config) => {
-                                loadPageData(view, config);
-                            });
-                        });
-                    });
-                }
-            });
-        }
+        //                    ApiClient.getPluginConfiguration(pluginId).then((config) => {
+        //                        loadPageData(view, config);
+        //                    });
+        //                });
+        //            });
+        //        }
+        //    });
+        //}
 
 
         function deviceNameImage(deviceName, AppName) {
@@ -257,8 +257,7 @@
                 () => {
                     ApiClient.getPluginConfiguration(pluginId).then((config) => {
                         config.PersonalAccessToken = dlg.querySelector('#personalAccessToken').value;
-                        ApiClient.updatePluginConfiguration(pluginId, config).then((result) => {
-                            Dashboard.processPluginConfigurationUpdateResult(result);
+                        ApiClient.updatePluginConfiguration(pluginId, config).then(() => {
                             dialogHelper.close(dlg);
                         });
                     });
@@ -450,16 +449,7 @@
             var liveTvPlaybackUnPausedSelect = dlg.querySelector('#LiveTvPlaybackUnPaused');
 
             var schedule                     = dlg.querySelector('#scheduleTime');
-
-            var mediaItemCreditLength        = dlg.querySelector('#creditLength');
-            var mediaItemCreditsSelect       = dlg.querySelector('#MediaItemCredits');
-
-
-            removeOptionsFromSelect(mediaItemCreditsSelect);
-
-            // Append an empty option for the purpose of the user selecting no scene events.
-            mediaItemCreditsSelect.innerHTML += ('<option value=""></option>');
-
+             
             removeOptionsFromSelect(moviePlaybackStartedSelect);
             removeOptionsFromSelect(moviePlaybackStoppedSelect);
             removeOptionsFromSelect(moviePlaybackPausedSelect);
@@ -510,7 +500,7 @@
                             liveTvPlaybackStoppedSelect.innerHTML  += ('<option value="' + scene.sceneId + '">' + scene.sceneName + '</option>');
                             liveTvPlaybackPausedSelect.innerHTML   += ('<option value="' + scene.sceneId + '">' + scene.sceneName + '</option>');
                             liveTvPlaybackUnPausedSelect.innerHTML += ('<option value="' + scene.sceneId + '">' + scene.sceneName + '</option>');
-                            mediaItemCreditsSelect.innerHTML       += ('<option value="' + scene.sceneId + '">' + scene.sceneName + '</option>');
+                            
                         });
 
                         if (config.SaveSmartThingsProfiles) {
@@ -529,8 +519,7 @@
                                     liveTvPlaybackPausedSelect.value   = option.LiveTvPlaybackPaused || "";
                                     liveTvPlaybackUnPausedSelect.value = option.LiveTvPlaybackUnPaused || "";
                                     schedule.value                     = option.Schedule || "";
-                                    mediaItemCreditLength.value        = option.MediaItemCreditLength || "";
-                                    mediaItemCreditsSelect.value       = option.MediaItemCredits || "";
+                                    
 
                                 }
                             });
@@ -558,8 +547,7 @@
 
                     var schedule                     = dlg.querySelector('#scheduleTime');
 
-                    var mediaItemCreditLength        = dlg.querySelector('#creditLength');
-                    var mediaItemCreditsSelect       = dlg.querySelector('#MediaItemCredits');
+                    
 
                     var newSavedHueEmbyOptions = {
                         AppName: app,
@@ -612,12 +600,9 @@
                             liveTvPlaybackUnPausedSelect.options[liveTvPlaybackUnPausedSelect.selectedIndex >= 0
                                 ? liveTvPlaybackUnPausedSelect.selectedIndex
                                 : 0].value,
-                        MediaItemCredits:
-                            mediaItemCreditsSelect.options[mediaItemCreditsSelect.selectedIndex >= 0
-                                ? mediaItemCreditsSelect.selectedIndex
-                                : 0].value,
+                        
                         Schedule: schedule.value,
-                        MediaItemCreditLength: mediaItemCreditLength.value
+                        
                     }
 
                     ApiClient.getPluginConfiguration(pluginId).then((config) => {
@@ -651,8 +636,7 @@
 
         }
 
-        function loadPageData(view, config) {
-
+        function loadPageData(view, config) { 
             
             //Fill the Device List - This is a sorted list without duplications
             var embyDeviceList = view.querySelector('#selectEmbyDevice');
@@ -728,8 +712,6 @@
 
                     loadConfig(view);
                      
-                    
-
                     //Let's discover the bridge
                     /*
                     view.querySelector('#discoverBridge').addEventListener('click',
