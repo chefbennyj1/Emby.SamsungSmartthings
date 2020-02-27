@@ -92,8 +92,7 @@ namespace SamsungSmartThings
         // ReSharper disable once TooManyArguments
         private void PlaybackUnPaused(PlaybackProgressEventArgs e, PluginConfiguration config, SavedProfile profile)
         {
-            if (config.HubIpAddress == null) return;
-
+            
             logger.Info("Samsung Smart Things Reports Playback UnPaused...");
 
             logger.Info("Samsung Smart Things Found Profile Device: " + profile.DeviceName);
@@ -133,8 +132,7 @@ namespace SamsungSmartThings
         // ReSharper disable once TooManyArguments
         private void PlaybackPaused(PlaybackProgressEventArgs e, PluginConfiguration config, SessionInfo session, SavedProfile profile)
         {
-            if (config.HubIpAddress == null) return;
-
+            
             logger.Info("Samsung Smart Things Reports Playback Paused...");
 
             logger.Info($"Samsung Smart Things Found Session Device: { session.DeviceName }");
@@ -176,9 +174,7 @@ namespace SamsungSmartThings
             logger.Info("Samsung Smart Things Reports Playback Stopped");
 
             var config = Plugin.Instance.Configuration;
-
-            if (config.HubIpAddress == null) return;
-
+            
             if (e.IsPaused) return;
 
             //We check here if a profile exists or return
@@ -231,8 +227,7 @@ namespace SamsungSmartThings
         private void PlaybackStart(object sender, PlaybackProgressEventArgs e)
         {
             var config = Plugin.Instance.Configuration;
-            if (config.HubIpAddress == null) return;
-
+            
             //No profile, move on
             if (!config.SaveSmartThingsProfiles.Exists(p => p.DeviceName.Equals(e.DeviceName) && p.AppName.Equals(e.ClientName))) return;
 

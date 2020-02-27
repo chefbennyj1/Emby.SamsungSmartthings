@@ -7,7 +7,7 @@ namespace SamsungSmartThings.Configuration
     {
         
         public List<SavedProfile> SaveSmartThingsProfiles { get; set; }
-        public string HubIpAddress                        { get; set; }
+       
         public string PersonalAccessToken                 { get; set; }
 
     }
