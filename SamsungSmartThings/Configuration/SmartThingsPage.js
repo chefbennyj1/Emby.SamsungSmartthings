@@ -290,8 +290,8 @@
             html += '<button is="paper-icon-button-light" class="btnCloseDialog autoSize paper-icon-button-light" tabindex="-1"><i class="md-icon"></i></button><h3 class="formDialogHeaderTitle">Editing ' + device + ' ' + app + '</h3>';
             html += '</div>';
 
-            html += '<div class="formDialogContent" style="margin:2em; height:35em">';
-            html += '<div class="dialogContentInner dialog-content-centered scrollY" style="height:35em;">';
+            html += '<div class="formDialogContent">';
+            html += '<div class="dialogContentInner dialog-content-centered scrollY" style="height:28%;">';
 
 
             html += '<div style="padding-bottom:3em"> ';
@@ -423,8 +423,9 @@
             html += '<div class="fieldDescription">Determines when scenes should be run by Emby. Between the time above and 4 AM.</div>';
             html += '</div>';
 
-            html += '<div class="formDialogFooter" style="margin:2em; padding-top:2%;">';
-            html += '<button id="saveButton" is="emby-button" type="submit" class="raised button-submit block formDialogFooterItem emby-button">Save</button>';
+
+            html += '<div style="padding:2%;">';
+            html += '<button id="saveButton" is="emby-button" type="submit" class="raised button-submit block emby-button">Save</button>';
             html += '</div>';
 
             html += '</div>';
