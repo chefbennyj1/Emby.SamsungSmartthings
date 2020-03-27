@@ -1,4 +1,4 @@
-﻿define(["loading", "dialogHelper", "emby-checkbox", "emby-select", "emby-input", "alert"],
+﻿define(["loading", "dialogHelper", "formDialogStyle", "emby-checkbox", "emby-select", "emby-input", "alert"],
     function (loading, dialogHelper, alert) {
 
         var pluginId = "6952341D-5579-41D7-A771-703484AECAD9";
@@ -291,7 +291,7 @@
             html += '</div>';
 
             html += '<div class="formDialogContent">';
-            html += '<div class="dialogContentInner dialog-content-centered scrollY" style="height:28%;">';
+            html += '<div class="dialogContentInner dialog-content-centered scrollY" style="max-height:28%;">';
 
 
             html += '<div style="padding-bottom:3em"> ';
