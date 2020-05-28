@@ -7,6 +7,7 @@ using MediaBrowser.Common.Net;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Plugins;
 using MediaBrowser.Controller.Session;
+using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Logging;
 using MediaBrowser.Model.Serialization;
 using SamsungSmartThings.Configuration;
@@ -21,7 +22,8 @@ namespace SamsungSmartThings
         private static IHttpClient Client             { get; set; }
         private static ServerEntryPoint Instance      { get; set; }
         private static ISessionManager SessionManager { get; set; }
-        
+        // Length of  video backdrop /or Emby intro in ticks. We need to ignore this.
+        private const long IntroOrVideoBackDrop = 3000000000L;
 
         // ReSharper disable once TooManyDependencies
         public ServerEntryPoint(IJsonSerializer jsonSerializer, IHttpClient client, ISessionManager sessionManager, ILogManager logManager)
@@ -49,50 +51,78 @@ namespace SamsungSmartThings
             SessionManager.PlaybackProgress += PlaybackProgress;
         }
 
-        private List<string> PausedSessionsIds = new List<string>();
+        private static List<string> CreditSessions = new List<string>();
 
+        private void PlaybackCredits(PlaybackProgressEventArgs e, SavedProfile profile, PluginConfiguration config)
+        {
+            if (CreditSessions.Exists(s => s.Equals(e.Session.Id))) return; //We've already triggered the event, it's in the list - move on
+
+            CreditSessions.Add(e.Session.Id); //Add the session ID to the list so this event doesn't trigger again
+            logger.Info($"Samsung Smart Things Reports trigger Credit Scene on {e.DeviceName}"); //Log that shit.
+
+            RunScene(profile.MediaItemCredits, config, "CreditScene");
+
+        }
+        
+
+        private static readonly List<string> PausedSessionsIds = new List<string>();
+        private static bool IgnoreEvents;
         private void PlaybackProgress(object sender, PlaybackProgressEventArgs e)
         {
             var config = Plugin.Instance.Configuration;
-            
-            
-            //No paused Session and no flagged sessions paused, move on
-            // ReSharper disable once ComplexConditionExpression
-            if (!SessionManager.Sessions.Any(s => s.PlayState.IsPaused) && !PausedSessionsIds.Any()) return;
-            
-            switch (e.Session.PlayState.IsPaused)
+            SavedProfile profile = null;
+
+            if (config.SaveSmartThingsProfiles.Exists(p => p.DeviceName.Equals(e.Session.DeviceName)))
             {
-                case true:
-                    // We've already flagged this session, move on
-                    if (PausedSessionsIds.Exists(s => s.Equals(e.Session.Id))) return;
-                    //We don't have a profile for this paused session device, move on
-                    if (!config.SaveSmartThingsProfiles.Exists(p => p.DeviceName.Equals(e.Session.DeviceName))) return;
-
-                    PausedSessionsIds.Add(e.Session.Id);
-
-                    PlaybackPaused(e, config, e.Session,
-                            config.SaveSmartThingsProfiles.FirstOrDefault(p =>
-                                p.DeviceName.Equals(e.Session.DeviceName)));
-
-                    break;
-
-                case false:
-
-                    if (PausedSessionsIds.Exists(s => s.Equals(e.Session.Id)))
-                    {
-                        PlaybackUnPaused(e, config, config.SaveSmartThingsProfiles.FirstOrDefault(p => p.DeviceName.Equals(e.Session.DeviceName)));
-                        PausedSessionsIds.RemoveAll(s => s.Equals(e.Session.Id));
-                    }
-
-                    break;
+                profile = config.SaveSmartThingsProfiles.FirstOrDefault(p => p.DeviceName.Equals(e.DeviceName) && p.AppName.Equals(e.Session.Client));
             }
-           
+            else
+            {
+                return;
+            }
+            
+            // ReSharper disable once ComplexConditionExpression
+            if (e.MediaInfo.Type.Equals("Movie") && e.Session.PlayState.PositionTicks >= (e.Item.RunTimeTicks - (profile.MediaItemCreditLength * 10000000)))
+            {
+                if (!ReferenceEquals(null, profile.MediaItemCredits))
+                {
+                    PlaybackCredits(e, profile, config);
+                }
+            }
+
+            if (IgnoreEvents)
+            {
+                return;
+            }
+
+            if (PausedSessionsIds.Contains(e.Session.Id))
+            {
+                if (!e.IsPaused || !e.Session.PlayState.IsPaused)
+                {
+                    IgnoreEvents = true;
+                    PausedSessionsIds.RemoveAll(s => s.Equals(e.Session.Id));
+                    PlaybackUnPaused(e, config, profile);
+                    IgnoreEvents = false;
+                }
+                return;
+            }
+
+            if(!PausedSessionsIds.Contains(e.Session.Id))
+            {
+                if (e.IsPaused || e.Session.PlayState.IsPaused)
+                {
+                    IgnoreEvents = true;
+                    PausedSessionsIds.Add(e.Session.Id);
+                    PlaybackPaused(e, config, profile);
+                    IgnoreEvents = false;
+                }
+            }
+                    
         }
 
         // ReSharper disable once TooManyArguments
         private void PlaybackUnPaused(PlaybackProgressEventArgs e, PluginConfiguration config, SavedProfile profile)
         {
-            
             logger.Info("Samsung Smart Things Reports Playback UnPaused...");
 
             logger.Info("Samsung Smart Things Found Profile Device: " + profile.DeviceName);
@@ -123,19 +153,18 @@ namespace SamsungSmartThings
                     break;
             }
 
-            logger.Info($"Samsung Smart Things Reports {e.MediaInfo.Type} will trigger Playback UnPaused Scene for {e.DeviceName}");
+            logger.Info($"Samsung Smart Things Reports {e.GetType().Name} will trigger Playback UnPaused Scene for {e.DeviceName}");
 
-            RunScene(sceneName, config);
+            RunScene(sceneName, config, "UnPause");
 
         }
 
         // ReSharper disable once TooManyArguments
-        private void PlaybackPaused(PlaybackProgressEventArgs e, PluginConfiguration config, SessionInfo session, SavedProfile profile)
+        private void PlaybackPaused(PlaybackProgressEventArgs e, PluginConfiguration config, SavedProfile profile)
         {
-            
             logger.Info("Samsung Smart Things Reports Playback Paused...");
 
-            logger.Info($"Samsung Smart Things Found Session Device: { session.DeviceName }");
+            logger.Info($"Samsung Smart Things Found Session Device: { profile.DeviceName }");
 
             if (!ScheduleAllowScene(profile))
             {
@@ -164,8 +193,8 @@ namespace SamsungSmartThings
                     break;
             }
 
+            logger.Info($"Samsung Smart Things will trigger Paused: { profile.DeviceName }");
             RunScene(sceneName, config);
-
 
         }
 
@@ -176,7 +205,7 @@ namespace SamsungSmartThings
             var config = Plugin.Instance.Configuration;
             
             if (e.IsPaused) return;
-
+            
             //We check here if a profile exists or return
             if (!config.SaveSmartThingsProfiles.Exists(p => p.DeviceName.Equals(e.DeviceName) &&
                                                          p.AppName.Equals(e.ClientName))) return;
@@ -184,7 +213,8 @@ namespace SamsungSmartThings
             //The item was in a paused state when the user stopped it, clean up the paused session list.
             if (PausedSessionsIds.Exists(s => s.Equals(e.Session.Id))) PausedSessionsIds.RemoveAll(s => s.Equals(e.Session.Id));
 
-           
+            //The item might appear in the credit session list remove it if it does.
+            if (CreditSessions.Exists(s => s.Equals(e.Session.Id))) CreditSessions.RemoveAll(s => s.Equals(e.Session.Id));
 
             //We can assume this will not be null, even though he have to assert it is not null below "profile?.{property}"
             var profile = config.SaveSmartThingsProfiles.FirstOrDefault(p => p.DeviceName.Equals(e.DeviceName) &&
@@ -220,12 +250,20 @@ namespace SamsungSmartThings
 
             logger.Info("Samsung Smart Things Reports " + e.MediaInfo.Type + " will trigger Playback Stopped Scene on " + e.DeviceName);
 
-            RunScene (sceneName, config);
+            RunScene (sceneName, config, "PlaybackStopped");
 
         }
 
         private void PlaybackStart(object sender, PlaybackProgressEventArgs e)
         {
+            // ReSharper disable once ComplexConditionExpression
+            if (e.MediaInfo.RunTimeTicks != null && (e.Item.MediaType == MediaType.Video && e.MediaInfo.RunTimeTicks.Value < IntroOrVideoBackDrop))
+            {
+                return;
+            }
+
+            if (e.IsPaused) return;
+
             var config = Plugin.Instance.Configuration;
             
             //No profile, move on
@@ -267,7 +305,7 @@ namespace SamsungSmartThings
 
             logger.Info($"Samsung Smart Things Reports { e.MediaInfo.Type } will trigger Playback Started Scene on { e.DeviceName }");
 
-            RunScene(sceneName, config);
+            RunScene(sceneName, config, "PlaybackStarted");
 
         }
         
@@ -279,8 +317,9 @@ namespace SamsungSmartThings
                    (DateTime.Now <= DateTime.Now.Date.AddDays(1).AddHours(4));
         }
 
-        private void RunScene(string sceneId, PluginConfiguration config)
+        private void RunScene(string sceneId, PluginConfiguration config, string eventName = "")
         {
+            logger.Info($"{eventName} will run {sceneId}");
             var sceneUrl = "https://api.smartthings.com/v1/scenes/" + sceneId + "/execute";
             
             try
@@ -295,6 +334,8 @@ namespace SamsungSmartThings
                         var json =  streamReader.ReadToEnd();
                     }
                 }
+
+                logger.Info($"Scene Successfully executed: {eventName}");
 
             }
             catch (Exception ex)

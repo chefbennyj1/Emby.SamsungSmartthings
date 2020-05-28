@@ -335,8 +335,22 @@
             html += '<div class="selectArrowContainer">';
             html += '<div style="visibility: hidden;">0</div><i class="selectArrow md-icon"></i>';
             html += '</div> ';
+            html += '</div>'; 
+
+            html += '<div class="selectContainer">';
+            html += '<label class="selectLabel" for="MediaItemCredits">Movies Credit Scene:</label>';
+            html += '<select is="emby-select" type="text" id="MediaItemCredits" name="MediaItemCredits" class="emby-input"></select>';
+            html += '<div class="selectArrowContainer">';
+            html += '<div style="visibility: hidden;">0</div><i class="selectArrow md-icon"></i>';
             html += '</div>';
-         
+            html += '</div>';
+
+            html += '<div class="inputContainer">';
+            html += '<label class="inputLabel inputLabelUnfocused" for="creditLength">Movies Credit Length</label>';
+            html += '<input is="emby-input" type="number" id="creditLength" label="Media Item Credit Length" class="emby-input">';
+            html += '<div class="fieldDescription">Estimated time to schedule the credit scene before the end of the media item in seconds.</div>';
+            html += '</div>';
+
             html += '<div class="sectionTitleContainer align-items-center"> ';
             html += '<h2 class="sectionTitle"><span>Series</span></h2> ';
             html += '<p>These scene will be set when series/seasons/episodes start, stop or resume playing.</p>  ';
@@ -450,7 +464,17 @@
             var liveTvPlaybackUnPausedSelect = dlg.querySelector('#LiveTvPlaybackUnPaused');
 
             var schedule                     = dlg.querySelector('#scheduleTime');
-             
+
+            var mediaItemCreditLength        = dlg.querySelector('#creditLength');
+            var mediaItemCreditsSelect       = dlg.querySelector('#MediaItemCredits');
+
+
+            removeOptionsFromSelect(mediaItemCreditsSelect);
+
+            // Append an empty option for the purpose of the user selecting no scene events.
+            mediaItemCreditsSelect.innerHTML += ('<option value=""></option>');
+
+
             removeOptionsFromSelect(moviePlaybackStartedSelect);
             removeOptionsFromSelect(moviePlaybackStoppedSelect);
             removeOptionsFromSelect(moviePlaybackPausedSelect);
@@ -501,7 +525,7 @@
                             liveTvPlaybackStoppedSelect.innerHTML  += ('<option value="' + scene.sceneId + '">' + scene.sceneName + '</option>');
                             liveTvPlaybackPausedSelect.innerHTML   += ('<option value="' + scene.sceneId + '">' + scene.sceneName + '</option>');
                             liveTvPlaybackUnPausedSelect.innerHTML += ('<option value="' + scene.sceneId + '">' + scene.sceneName + '</option>');
-                            
+                            mediaItemCreditsSelect.innerHTML       += ('<option value="' + scene.sceneId + '">' + scene.sceneName + '</option>');
                         });
 
                         if (config.SaveSmartThingsProfiles) {
@@ -520,7 +544,8 @@
                                     liveTvPlaybackPausedSelect.value   = option.LiveTvPlaybackPaused || "";
                                     liveTvPlaybackUnPausedSelect.value = option.LiveTvPlaybackUnPaused || "";
                                     schedule.value                     = option.Schedule || "";
-                                    
+                                    mediaItemCreditLength.value        = option.MediaItemCreditLength || "";
+                                    mediaItemCreditsSelect.value       = option.MediaItemCredits || "";
 
                                 }
                             });
@@ -548,7 +573,8 @@
 
                     var schedule                     = dlg.querySelector('#scheduleTime');
 
-                    
+                    var mediaItemCreditLength        = dlg.querySelector('#creditLength');
+                    var mediaItemCreditsSelect       = dlg.querySelector('#MediaItemCredits');
 
                     var newSavedHueEmbyOptions = {
                         AppName: app,
@@ -602,7 +628,12 @@
                                 ? liveTvPlaybackUnPausedSelect.selectedIndex
                                 : 0].value,
                         
+                        MediaItemCredits:
+                            mediaItemCreditsSelect.options[mediaItemCreditsSelect.selectedIndex >= 0
+                                ? mediaItemCreditsSelect.selectedIndex
+                                : 0].value,
                         Schedule: schedule.value,
+                        MediaItemCreditLength: mediaItemCreditLength.value
                         
                     }
 
